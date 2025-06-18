@@ -18,6 +18,31 @@ app.add_middleware(
 @app.get("/")
 def home():
     return {"message": "LinkedIn Extractor API is live!"}
+
+@app.get("/extract-profile")
+def extract(username: str):
+    result = api_manager.fetch_profile_data_by_username(username)
+    return result
+
+@app.get("/extract-posts")
+def extract_posts(username: str = Query(..., description="LinkedIn username")):
+    posts = api_manager.fetch_recent_posts_by_username(username)
+    return posts
+
+@app.get("/extract-comments")
+def extract_comments(username: str = Query(..., description="LinkedIn username")):
+    comments = api_manager.fetch_profile_comments_by_username(username)
+    return comments
+
+@app.get("/extract-likes")
+def extract_likes(username: str = Query(..., description="LinkedIn username")):
+    likes = api_manager.fetch_profile_likes_by_username(username)
+    return likes
+
+@app.get("/extract-post-comments")
+def extract_post_comments(urn: str = Query(...), count: int = Query(10)):
+    comments = api_manager.fetch_comments_by_post_urn(urn, count)
+    return comments
     
 @app.get("/extract-all")
 def extract_all(
@@ -27,9 +52,10 @@ def extract_all(
 ) -> dict[str, Any]:
     api_manager.api_calls = 0
     profile = api_manager.fetch_profile_data_by_username(username)
-    posts_result = api_manager.fetch_recent_posts_by_username(username)
-    comments = api_manager.fetch_profile_comments_by_username(username)
-    likes = api_manager.fetch_profile_likes_by_username(username)
+    print(profile)
+    posts_result =  api_manager.fetch_recent_posts_by_username(username)
+    comments =  api_manager.fetch_profile_comments_by_username(username)
+    likes =  api_manager.fetch_profile_likes_by_username(username)
 
     posts = posts_result.posts
     reposts = posts_result.reposts
@@ -39,7 +65,7 @@ def extract_all(
     if extract_comments.lower() == "yes":
         for post in posts:
             post_dict = post.dict()
-            post_dict["comments"] = api_manager.fetch_comments_by_post_urn(post.urn, count)
+            post_dict["comments"] =  api_manager.fetch_comments_by_post_urn(post.urn, count)
             posts_output.append(post_dict)
     else:
         posts_output = [post.dict() for post in posts]

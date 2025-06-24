@@ -35,6 +35,7 @@ class LinkedInAPIManager:
             self.conn.close()
             return json.loads(data.decode("utf-8"))
         except Exception as e:
+            print("Error",e)
             raise ValueError(f"API request failed: {e}")
 
     def fetch_profile_data_by_username(self, username: str) -> ProfileOutput:

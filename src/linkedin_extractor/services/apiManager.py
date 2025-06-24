@@ -41,7 +41,6 @@ class LinkedInAPIManager:
         validated_input = UsernameInput(username=username)
         path = f"/?username={validated_input.username}"
         decoded_data = self._make_api_request(path)
-        print("decoded_data",decoded_data)
         output_data = {
             "headline": decoded_data.get("headline"),
             "location": decoded_data.get("geo", {}).get("full"),
